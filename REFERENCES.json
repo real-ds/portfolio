@@ -1,0 +1,57 @@
+{
+  "figma": {
+    "name": "Personal Portfolio \u2014 AI Engineer \u00d7 Design",
+    "fileKey": "VdnOnJVngcNi5To9X6ndQi",
+    "rootNode": "3:2",
+    "url": "https://www.figma.com/design/VdnOnJVngcNi5To9X6ndQi"
+  },
+  "animations": [
+    {
+      "name": "EncryptedText",
+      "purpose": "arrival"
+    },
+    {
+      "name": "TypewriterEffect",
+      "purpose": "voice/personality"
+    },
+    {
+      "name": "TextGenerateEffect",
+      "purpose": "editorial reading"
+    },
+    {
+      "name": "Scroll Saturation",
+      "purpose": "attention/reading"
+    },
+    {
+      "name": "DS \u2192 Designer",
+      "purpose": "identity/signature"
+    },
+    {
+      "name": "Terminal typing",
+      "purpose": "engineering identity"
+    },
+    {
+      "name": "Hover Quick View",
+      "purpose": "exploration"
+    },
+    {
+      "name": "Apple Cards Carousel",
+      "purpose": "project exploration"
+    },
+    {
+      "name": "Dotted Glow",
+      "purpose": "CTA atmosphere"
+    },
+    {
+      "name": "Faded Footer Wordmark",
+      "purpose": "signature"
+    },
+    {
+      "name": "Dark \u2194 Light Theme",
+      "purpose": "state change"
+    }
+  ],
+  "excluded": [
+    "AI chatbot"
+  ]
+}

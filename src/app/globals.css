@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --bg: #0B0B0B;
+  --foreground: #FFFFFF;
+  --muted: #7e7e79;
+  --dim: #707068;
+  --panel: #161616;
+  --accent: #FF0033;
+  --accent-bright: #ff3c63;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
+}
+
+[data-theme="light"] {
+  --bg: #F5F5EF;
+  --foreground: #000000;
+  --muted: #444440;
+  --dim: #999999;
+  --panel: #E9E9E2;
+  --accent: #722F37;
+  --accent-bright: #FF0033;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-dim: var(--dim);
+  --color-panel: var(--panel);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--foreground);
+  font-family: "Cascadia Code", "Cascadia Mono", "Consolas", "Courier New", monospace;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.3;
+  transition: 
+    background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    color-mix 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings + the name keep their display font */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display {
+  font-family: var(--font-display), "Inter", system-ui, sans-serif;
+}
+
+/* Technical mono labels keep their mono font */
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* Hero + footer stay on the sans font, untouched */
+#home,
+.hero-section,
+footer {
+  font-family: var(--font-sans), "Inter", system-ui, sans-serif;
+}
+
+#home .font-mono,
+.hero-section .font-mono,
+footer .font-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dim);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Hide scrollbar on the design theory scroll section */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar inside the terminal window */
+.no-visible-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-visible-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Demo colors */
+:root {
+  --demo-bg: #ffffff;
+  --demo-text: #1a1a1a;
+}
+
+/* Technology ribbon infinite scroll animation */
+@keyframes ribbon-scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Reduced motion */
