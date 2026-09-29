@@ -112,7 +112,7 @@ export function AboutPageContent() {
           <div className="space-y-6 max-w-xl">
             {/* Email */}
             <motion.a
-              href="mailto:"
+              href="mailto:divyanshu.vitc@gmail.com"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-50px" }}
@@ -122,14 +122,16 @@ export function AboutPageContent() {
               <span className="text-xs font-mono tracking-widest uppercase text-[var(--dim)] w-24">
                 EMAIL
               </span>
-              <span className="text-lg text-[var(--muted)] group-hover:text-[var(--accent)] transition-colors">
-                Add email address
+              <span className="text-lg text-[var(--muted)] group-hover:text-[var(--accent)] transition-colors break-all">
+                divyanshu.vitc@gmail.com
               </span>
             </motion.a>
 
             {/* LinkedIn */}
             <motion.a
-              href="#"
+              href="https://www.linkedin.com/in/realdivyanshusingh"
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-50px" }}
@@ -139,8 +141,8 @@ export function AboutPageContent() {
               <span className="text-xs font-mono tracking-widest uppercase text-[var(--dim)] w-24">
                 LINKEDIN
               </span>
-              <span className="text-lg text-[var(--muted)] group-hover:text-[var(--accent)] transition-colors">
-                Add LinkedIn profile
+              <span className="text-lg text-[var(--muted)] group-hover:text-[var(--accent)] transition-colors break-all">
+                /in/realdivyanshusingh
               </span>
             </motion.a>
 
