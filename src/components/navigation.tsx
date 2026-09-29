@@ -6,6 +6,8 @@ import Link from "next/link";
 import { navLinks } from "@/lib/content";
 import { motionTokens, easing } from "@/lib/motion";
 
+const MotionLink = motion.create(Link);
+
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -26,32 +28,29 @@ export function Navigation() {
       aria-label="Main navigation"
     >
       {/* Logo / Identity - Left */}
-      <motion.button
-        onClick={() => window.location.href = "/"}
-        className="relative font-mono text-lg tracking-tight cursor-pointer select-none bg-transparent border-none p-0"
-        tabIndex={0}
+      <MotionLink
+        href="/"
+        className="relative font-mono text-lg tracking-tight select-none"
         aria-label="Divyanshu Singh - Home"
       >
         <span className="inline-flex items-center whitespace-nowrap">
           DS.
         </span>
-      </motion.button>
+      </MotionLink>
 
       {/* Navigation Links - Center */}
       <div className="hidden md:flex items-center gap-8 mx-auto">
         {navLinks.slice(0, 3).map((link) => (
-          <motion.button
+          <MotionLink
             key={link.label}
-            onClick={() => {
-              window.location.href = link.href.startsWith('#') ? `/${link.href}` : link.href;
-            }}
-            className="text-xs font-mono tracking-widest uppercase text-[var(--muted)] hover:text-[var(--foreground)] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer"
+            href={link.href.startsWith("#") ? `/${link.href}` : link.href}
+            className="text-xs font-mono tracking-widest uppercase text-[var(--muted)] hover:text-[var(--foreground)] transition-colors duration-300"
             whileHover={{ x: 4 }}
             transition={{ duration: motionTokens.fast, ease: easing.editorial }}
           >
             {link.label}
             <span className="ml-1 opacity-40">→</span>
-          </motion.button>
+          </MotionLink>
         ))}
       </div>
 

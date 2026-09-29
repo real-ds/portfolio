@@ -7,6 +7,8 @@ import { navLinks } from "@/lib/content";
 import { useTheme } from "./theme-provider";
 import { motionTokens, easing } from "@/lib/motion";
 
+const MotionLink = motion.create(Link);
+
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -53,9 +55,9 @@ export function MobileNav() {
           >
             <nav className="flex flex-col items-center gap-8">
               {navLinks.slice(0, 3).map((link, index) => (
-                <motion.a
+                <MotionLink
                   key={link.label}
-                  href={link.href}
+                  href={link.href.startsWith("#") ? `/${link.href}` : link.href}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
@@ -68,11 +70,11 @@ export function MobileNav() {
                   onClick={() => setIsOpen(false)}
                 >
                   {link.label}
-                </motion.a>
+                </MotionLink>
               ))}
 
               {/* GET IN TOUCH button in mobile */}
-              <motion.a
+              <MotionLink
                 href="/about"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -87,10 +89,10 @@ export function MobileNav() {
               >
                 GET IN TOUCH
                 <span>→</span>
-              </motion.a>
+              </MotionLink>
 
               {/* About Me link */}
-              <motion.a
+              <MotionLink
                 href="/about"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -104,7 +106,7 @@ export function MobileNav() {
                 onClick={() => setIsOpen(false)}
               >
                 About Me
-              </motion.a>
+              </MotionLink>
 
               {/* Theme toggle in mobile menu */}
               <motion.button

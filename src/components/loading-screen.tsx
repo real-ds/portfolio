@@ -1,10 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/components/theme-provider";
 import { motionTokens, easing } from "@/lib/motion";
 import { EncryptedText } from "@/components/ui/encrypted-text";
+
+const SESSION_KEY = "ds-land-intro-seen";
+const listeners = new Set<() => void>();
+
+function subscribeIntroSeen(callback: () => void) {
+  listeners.add(callback);
+  return () => {
+    listeners.delete(callback);
+  };
+}
+
+function readIntroSeen(): boolean {
+  try {
+    return window.sessionStorage.getItem(SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function getIntroSeenSnapshot() {
+  return readIntroSeen();
+}
+
+function getIntroSeenServerSnapshot() {
+  return false;
+}
+
+function markIntroSeen() {
+  try {
+    window.sessionStorage.setItem(SESSION_KEY, "1");
+  } catch {
+    return;
+  }
+  listeners.forEach((listener) => listener());
+}
 
 interface LoadingScreenProps {
   onComplete?: () => void;
@@ -12,12 +47,20 @@ interface LoadingScreenProps {
 
 export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const { theme } = useTheme();
+  const seen = useSyncExternalStore(
+    subscribeIntroSeen,
+    getIntroSeenSnapshot,
+    getIntroSeenServerSnapshot
+  );
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
+    if (seen) return;
+
     const duration = 4200;
     const startTime = performance.now();
+    let rafId = 0;
 
     const updateProgress = (now: number) => {
       const elapsed = now - startTime;
@@ -25,19 +68,22 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       setProgress(newProgress);
 
       if (newProgress < 100) {
-        requestAnimationFrame(updateProgress);
+        rafId = requestAnimationFrame(updateProgress);
       } else {
         setIsComplete(true);
+        markIntroSeen();
         setTimeout(() => {
           onComplete?.();
         }, 500);
       }
     };
 
-    const rafId = requestAnimationFrame(updateProgress);
+    rafId = requestAnimationFrame(updateProgress);
 
     return () => cancelAnimationFrame(rafId);
-  }, [onComplete]);
+  }, [seen, onComplete]);
+
+  const shouldShow = !isComplete && !seen;
 
   const bgColor = theme === "dark" ? "#0B0B0B" : "#F5F5EF";
   const textColor = theme === "dark" ? "#FFFFFF" : "#000000";
@@ -45,7 +91,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
   return (
     <AnimatePresence>
-      {!isComplete && (
+      {shouldShow && (
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}

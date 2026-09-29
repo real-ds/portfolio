@@ -40,12 +40,7 @@ export default function AIProjectPage({ params }: PageProps) {
             className="mb-8"
           >
             <Link
-              href="/"
-              scroll={false}
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = "/#ai-projects";
-              }}
+              href="/#ai-projects"
               className="inline-flex items-center gap-2 text-sm font-mono text-[var(--muted)] hover:text-[var(--accent)] transition-colors duration-300"
             >
               <span>←</span>
