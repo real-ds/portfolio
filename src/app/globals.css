@@ -77,8 +77,11 @@ h6,
   font-family: var(--font-mono), ui-monospace, monospace;
 }
 
-/* Hero + footer stay on the sans font, untouched */
-#home,
+/* Hero uses Inter for the cinematic portfolio treatment */
+#home {
+  font-family: var(--font-inter), "Inter", var(--font-sans), system-ui, sans-serif;
+}
+
 .hero-section,
 footer {
   font-family: var(--font-sans), "Inter", system-ui, sans-serif;
@@ -126,6 +129,21 @@ footer .font-mono {
   background: var(--muted);
 }
 
+/* Hide the document scrollbar (page still scrolls) — it was sitting on top of
+   the hero artwork. Scoped to html/body so inner scroll areas keep their
+   styling above. */
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 /* Hide scrollbar on the design theory scroll section */
 .hide-scrollbar {
   scrollbar-width: none;
@@ -160,6 +178,169 @@ footer .font-mono {
   100% {
     transform: translateX(-100%);
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Cinematic hero — film grain + volumetric light streak              */
+/* ------------------------------------------------------------------ */
+
+.hero-root {
+  font-family: var(--font-inter), "Inter", var(--font-sans), system-ui, sans-serif;
+}
+
+/* Fine, irregular high-ISO grain (two offset layers, no obvious loop) */
+.hero-grain::before,
+.hero-grain::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+}
+
+.hero-grain::before {
+  opacity: 0.05;
+  animation: grain-drift-a 7s steps(6, end) infinite;
+}
+
+.hero-grain::after {
+  opacity: 0.035;
+  background-size: 240px 240px;
+  animation: grain-drift-b 11s steps(8, end) infinite;
+}
+
+@keyframes grain-drift-a {
+  0% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-6%, 4%, 0); }
+  40% { transform: translate3d(4%, -7%, 0); }
+  60% { transform: translate3d(-3%, 8%, 0); }
+  80% { transform: translate3d(7%, -3%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes grain-drift-b {
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(5%, -5%, 0); }
+  50% { transform: translate3d(-7%, 3%, 0); }
+  75% { transform: translate3d(3%, 6%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Natural, ocean-like light reflections.
+   Many soft irregular glints drifting independently — no directional
+   beams, no hard-edged gradients. Screen-blended so the charcoal stays
+   neutral and only the reflections carry warmth. */
+.hero-reflections {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-glint {
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+.hero-glint-a {
+  animation: glint-drift-a 17s ease-in-out infinite alternate;
+}
+
+.hero-glint-b {
+  animation: glint-drift-b 23s ease-in-out infinite alternate;
+  animation-delay: -6s;
+}
+
+.hero-glint-c {
+  animation: glint-drift-c 29s ease-in-out infinite alternate;
+  animation-delay: -13s;
+}
+
+@keyframes glint-drift-a {
+  0% {
+    opacity: 0.35;
+    transform: translate3d(-1.5%, 1%, 0) scale(1);
+  }
+  50% {
+    opacity: 0.62;
+  }
+  100% {
+    opacity: 0.45;
+    transform: translate3d(1.8%, -1.4%, 0) scale(1.06);
+  }
+}
+
+@keyframes glint-drift-b {
+  0% {
+    opacity: 0.3;
+    transform: translate3d(1.2%, -1.6%, 0) scale(1.05);
+  }
+  100% {
+    opacity: 0.55;
+    transform: translate3d(-1.6%, 1.8%, 0) scale(0.97);
+  }
+}
+
+@keyframes glint-drift-c {
+  0% {
+    opacity: 0.25;
+    transform: translate3d(-0.8%, -1%, 0) scale(1.02);
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0.32;
+    transform: translate3d(1%, 1.2%, 0) scale(0.96);
+  }
+}
+
+/* Fine shimmer — the sparkle on the water surface, barely perceptible */
+.hero-shimmer {
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: shimmer-drift 21s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+@keyframes shimmer-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(-1.5%, 1%, 0);
+    opacity: 0.45;
+  }
+}
+
+/* Illuminated dust drifting through the beam */
+.hero-dust-layer-a {
+  animation: dust-a 30s ease-in-out infinite alternate;
+}
+
+.hero-dust-layer-b {
+  animation: dust-b 42s ease-in-out infinite alternate;
+}
+
+@keyframes dust-a {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.45; }
+  100% { transform: translate3d(4%, -6%, 0); opacity: 0.85; }
+}
+
+@keyframes dust-b {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.35; }
+  100% { transform: translate3d(-5%, 5%, 0); opacity: 0.7; }
 }
 
 /* Reduced motion */

@@ -22,6 +22,12 @@ const displayFont = Inter({
   display: "swap",
 });
 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Divyanshu Singh — AI Engineer × Design Enthusiast",
   description:
@@ -50,7 +56,7 @@ export default function RootLayout({
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} min-h-screen antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${inter.variable} min-h-screen antialiased`}
       >
         <ThemeProvider>
           <LoadingScreen />
