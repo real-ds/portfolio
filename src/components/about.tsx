@@ -32,7 +32,7 @@ const points = [
   {
     num: "01",
     kicker: "Creative Engineer",
-    body: "Creative Programmer, AI Developer, and Designer who designs robust software solutions around real-world problems.",
+    body: "Creative Developer and Designer who designs robust software solutions around real-world problems.",
   },
   {
     num: "02",

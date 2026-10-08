@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { motionTokens, easing } from "@/lib/motion";
+import { DitheringShader } from "@/components/ui/dithering-shader";
 import { useTheme } from "@/components/theme-provider";
 
 const SANS =
@@ -126,48 +127,83 @@ export function Hero() {
         }}
       />
 
+      {/* Dithering shader field. Sits above the background (z-0) but below the
+          portrait (z-8) and headings (z-20); the grain layers (z-2/z-3)
+          texture it. Colours track the theme so it stays a soft tonal field
+          rather than a competing accent. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
+        style={{ opacity: light ? 0.28 : 0.42, mixBlendMode: light ? "multiply" : "screen" }}
+      >
+        <DitheringShader
+          shape="wave"
+          type="8x8"
+          colorBack={light ? "#fbfaf7" : "#0a0a0a"}
+          colorFront={light ? "#b98f6d" : "#3a3936"}
+          pxSize={3}
+          speed={0.6}
+        />
+      </div>
+
       {/* Portrait */}
       <motion.div
-        className="absolute inset-y-0 right-0 z-[8] h-full w-full md:w-[67%] lg:w-[63%] xl:w-[61%]"
+        className="pointer-events-none absolute inset-y-0 right-0 z-[8] h-full w-full md:w-[67%] lg:w-[63%] xl:w-[61%]"
         initial={{ opacity: 0, x: 30, scale: 1.02 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ delay: 0.15, duration: 1.25, ease: easing.editorial }}
       >
-        <Image
-          src="/hero/hero-cutout.png"
-          alt="Portrait of Divyanshu Singh"
-          fill
-          priority
-          sizes="(max-width: 767px) 100vw, 63vw"
-          className="object-contain"
+        <div className="absolute inset-0 origin-[50%_100%] translate-x-[8%] scale-[1.24] md:scale-[1.08]">
+          <Image
+            src="/hero/hero-cutout.png"
+            alt="Portrait of Divyanshu Singh"
+            fill
+            priority
+            sizes="(max-width: 767px) 100vw, 63vw"
+            className="object-contain"
+            style={{
+              objectPosition: "100% 100%",
+              filter: "grayscale(1) contrast(1.06) brightness(.98)",
+            }}
+          />
+        </div>
+
+        {/* Fixed to the portrait so it rides the image transform. The shirt is
+            near-black in both themes and the photo is desaturated, so the
+            colour is a hard-coded light grey rather than a theme token. */}
+        <div
+          className="absolute bottom-8 right-6 z-10 text-right md:right-[13%]"
           style={{
-            objectPosition: "100% 100%",
-            filter: "grayscale(1) contrast(1.06) brightness(.98)",
-            transform: "translateX(8%) scale(1.08)",
-            transformOrigin: "50% 100%",
+            fontFamily: SANS,
+            color: "rgba(214,212,208,.9)",
+            lineHeight: 1.35,
           }}
-        />
+        >
+          <span className="block text-[11px] font-medium tracking-[0.2em] uppercase">
+            Creative Developer
+          </span>
+          <span className="block text-[11px] font-medium tracking-[0.2em] uppercase">
+            AI Enthusiast
+          </span>
+        </div>
       </motion.div>
 
       {/* Main content */}
       <div className="absolute inset-0 z-20 mx-auto max-w-[1700px] px-6 md:px-12 lg:px-16 xl:px-20">
-        <div className="flex h-full items-center">
+        <div className="flex h-full items-end pb-8 md:items-center md:pb-0">
           <motion.div
-            className="relative mt-[8vh] max-w-[820px] md:mt-[4vh]"
+            className="relative max-w-[820px] md:mt-[4vh]"
             initial="hidden"
             animate="show"
             variants={fadeUp}
             custom={0.1}
           >
             <h1
-              className="font-extrabold leading-[.84] tracking-[-0.065em]"
-              style={{
-                fontSize: "clamp(64px, 9.2vw, 158px)",
-              }}
+              className="text-[104px] font-extrabold leading-[.84] tracking-[-0.065em] md:text-[clamp(64px,9.2vw,158px)]"
             >
               <span
                 className="block"
-                style={{ color: light ? "#11110f" : "#f5f5f2" }}
+                style={{ color: "var(--accent)" }}
               >
                 Divyanshu
               </span>
@@ -175,11 +211,11 @@ export function Hero() {
               <span
                 className="block"
                 style={{
-                  color: light ? "#c7a486" : "#858581",
+                  color: light ? "#8a5a60" : "#a67d82",
                   marginTop: "0.015em",
                 }}
               >
-                Singh<span style={{ color: light ? "#c7a486" : "#858581" }}>.</span>
+                Singh<span style={{ color: light ? "#8a5a60" : "#a67d82" }}>.</span>
               </span>
             </h1>
           </motion.div>
@@ -199,17 +235,6 @@ export function Hero() {
         />
       )}
 
-      {/* Mobile CTA */}
-      <a
-        href="#contact"
-        className="absolute bottom-6 right-6 z-30 border px-5 py-3 text-[11px] font-medium uppercase tracking-[0.14em] md:hidden"
-        style={{
-          borderColor: light ? "#b79a86" : "#777",
-          color: light ? "#734e3c" : "#eee",
-        }}
-      >
-        Contact →
-      </a>
-    </section>
+      </section>
   );
 }

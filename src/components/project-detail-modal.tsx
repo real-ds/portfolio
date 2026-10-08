@@ -290,7 +290,7 @@ export function ProjectDetailModal({ project, onClose }: ProjectDetailModalProps
                 Tech Stack
               </h2>
               <div className="flex flex-wrap gap-3">
-                {project.stack.map((tech) => (
+                {project.stack.map((tech, index) => (
                   <motion.span
                     key={tech}
                     initial={{ opacity: 0, scale: 0.9 }}
