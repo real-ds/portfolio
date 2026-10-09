@@ -1,185 +1,103 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import type { PointerEvent, ReactNode } from "react";
-import { motionTokens, easing } from "@/lib/motion";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { buildLanyardAssets, type LanyardAssets } from "./lanyard-faces";
 
-/* ---------- motion ---------- */
+// three.js + WebGL: client only, and kept out of the initial bundle.
+const Lanyard = dynamic(() => import("@/components/ui/lanyard"), {
+  ssr: false,
+});
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
-};
+/* ---------- content: edit these ---------- */
 
-const item = {
-  hidden: { opacity: 0, y: 14, scale: 0.985 },
-  show: { opacity: 1, y: 0, scale: 1 },
-};
+const LINKEDIN_URL = "https://www.linkedin.com/in/realdivyanshusingh";
+const GITHUB_URL = "https://github.com/YOUR_USERNAME"; // TODO: set
+const CREDLY_URL = "https://www.credly.com/users/YOUR_USERNAME"; // TODO: set
+const RESUME_URL = "/resume.pdf";
 
-/* ---------- tile styling ---------- */
+const INTER = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
 
-type Tone = "glass" | "accent" | "ink";
-type Layout = "split" | "row" | "center" | "end";
+/* ---------- Inter ---------- */
 
-/** How the opposite-colour fill sweeps in on hover. */
-type Fx = "up" | "down" | "right" | "left" | "circle" | "diag";
+/** Loads Inter from Google Fonts once, so both the page and the card canvas can use it. */
+function loadInter(): Promise<void> {
+  return new Promise((resolve) => {
+    const finish = async () => {
+      try {
+        await Promise.all([
+          document.fonts.load("800 64px Inter"),
+          document.fonts.load("500 32px Inter"),
+        ]);
+      } catch {
+        /* fall back to system-ui */
+      }
+      resolve();
+    };
 
-/** What colour the tile flips to. */
-type Flip = "ink" | "accent" | "paper";
-
-const tones: Record<Tone, { surface: string; sub: string }> = {
-  glass: {
-    surface:
-      "border border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] bg-[color-mix(in_oklab,var(--bg)_55%,transparent)] text-[var(--foreground)] backdrop-blur-xl",
-    sub: "text-[var(--muted)]",
-  },
-  accent: {
-    surface: "bg-[var(--accent)] text-[var(--bg)]",
-    sub: "opacity-70",
-  },
-  ink: {
-    surface: "bg-[var(--foreground)] text-[var(--bg)]",
-    sub: "opacity-60",
-  },
-};
-
-const layouts: Record<Layout, string> = {
-  split: "flex-col justify-between p-5 md:p-6",
-  row: "flex-row items-center justify-between gap-4 px-7 py-4",
-  center: "flex-col items-center justify-center gap-2 p-6 text-center",
-  end: "flex-col justify-end gap-3 p-6 md:p-8",
-};
-
-// Fill layer: hidden shape -> full shape. Written out in full so Tailwind sees every class.
-const fxs: Record<Fx, string> = {
-  up: "[clip-path:inset(100%_0_0_0)] group-hover/tile:[clip-path:inset(0)] group-focus-visible/tile:[clip-path:inset(0)]",
-  down: "[clip-path:inset(0_0_100%_0)] group-hover/tile:[clip-path:inset(0)] group-focus-visible/tile:[clip-path:inset(0)]",
-  right:
-    "[clip-path:inset(0_100%_0_0)] group-hover/tile:[clip-path:inset(0)] group-focus-visible/tile:[clip-path:inset(0)]",
-  left: "[clip-path:inset(0_0_0_100%)] group-hover/tile:[clip-path:inset(0)] group-focus-visible/tile:[clip-path:inset(0)]",
-  circle:
-    "[clip-path:circle(0%_at_var(--x,50%)_var(--y,50%))] group-hover/tile:[clip-path:circle(150%_at_var(--x,50%)_var(--y,50%))] group-focus-visible/tile:[clip-path:circle(150%_at_var(--x,50%)_var(--y,50%))]",
-  diag: "[clip-path:polygon(0_0,0_0,0_0,0_0)] group-hover/tile:[clip-path:polygon(0_0,250%_0,0_250%,0_250%)] group-focus-visible/tile:[clip-path:polygon(0_0,250%_0,0_250%,0_250%)]",
-};
-
-const flips: Record<
-  Flip,
-  { fill: string; text: string; border: string; sub: string }
-> = {
-  ink: {
-    fill: "bg-[var(--foreground)]",
-    text: "hover:text-[var(--bg)] focus-visible:text-[var(--bg)]",
-    border: "hover:border-[var(--foreground)]",
-    sub: "group-hover/tile:text-[color-mix(in_oklab,var(--bg)_65%,transparent)] group-focus-visible/tile:text-[color-mix(in_oklab,var(--bg)_65%,transparent)]",
-  },
-  accent: {
-    fill: "bg-[var(--accent)]",
-    text: "hover:text-[var(--bg)] focus-visible:text-[var(--bg)]",
-    border: "hover:border-[var(--accent)]",
-    sub: "group-hover/tile:text-[color-mix(in_oklab,var(--bg)_65%,transparent)] group-focus-visible/tile:text-[color-mix(in_oklab,var(--bg)_65%,transparent)]",
-  },
-  paper: {
-    fill: "bg-[var(--bg)]",
-    text: "hover:text-[var(--accent)] focus-visible:text-[var(--accent)]",
-    border: "hover:border-[var(--bg)]",
-    sub: "group-hover/tile:text-[var(--accent)] group-focus-visible/tile:text-[var(--accent)]",
-  },
-};
-
-// Pointer position becomes the origin of the circular reveal.
-function setOrigin(e: PointerEvent<HTMLElement>) {
-  const r = e.currentTarget.getBoundingClientRect();
-  e.currentTarget.style.setProperty(
-    "--x",
-    `${((e.clientX - r.left) / r.width) * 100}%`,
-  );
-  e.currentTarget.style.setProperty(
-    "--y",
-    `${((e.clientY - r.top) / r.height) * 100}%`,
-  );
+    const existing = document.getElementById("inter-font") as HTMLLinkElement | null;
+    if (existing) {
+      void finish();
+      return;
+    }
+    const link = document.createElement("link");
+    link.id = "inter-font";
+    link.rel = "stylesheet";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap";
+    link.onload = () => void finish();
+    link.onerror = () => resolve();
+    document.head.appendChild(link);
+  });
 }
 
-function Tile({
-  children,
-  className = "",
-  radius = "rounded-[28px]",
-  tone = "glass",
-  layout = "split",
-  fx = "up",
-  flip = "ink",
-  track = false,
-  href,
-  external = false,
-}: {
-  children: (sub: string) => ReactNode;
-  className?: string;
-  radius?: string;
-  tone?: Tone;
-  layout?: Layout;
-  fx?: Fx;
-  flip?: Flip;
-  track?: boolean;
-  href?: string;
-  external?: boolean;
-}) {
-  const t = tones[tone];
-  const f = flips[flip];
+/* ---------- lanyard assets ---------- */
 
-  // Muted labels on glass tiles need their own colour flip; the others inherit.
-  const sub =
-    tone === "glass"
-      ? `${t.sub} transition-colors duration-300 group-hover/tile:delay-[260ms] group-focus-visible/tile:delay-[260ms] ${f.sub}`
-      : t.sub;
+/** Builds the card art from the live --accent value and rebuilds when the theme changes it. */
+function useLanyardAssets() {
+  const [assets, setAssets] = useState<LanyardAssets | null>(null);
 
-  const shared = {
-    variants: item,
-    whileHover: { scale: 1.01 },
-    transition: { duration: motionTokens.reveal, ease: easing.editorial },
-    onPointerEnter: track ? setOrigin : undefined,
-    onPointerLeave: track ? setOrigin : undefined,
-    className: [
-      "group/tile relative isolate flex overflow-hidden hover:z-10",
-      "transition-colors duration-300 hover:delay-[260ms] focus-visible:delay-[260ms] motion-reduce:transition-none",
-      "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent)]",
-      layouts[layout],
-      radius,
-      t.surface,
-      f.text,
-      f.border,
-      className,
-    ].join(" "),
-  };
+  useEffect(() => {
+    let cancelled = false;
+    let lastAccent = "";
 
-  const fill = (
-    <span
-      aria-hidden
-      className={[
-        "pointer-events-none absolute inset-0 -z-10",
-        f.fill,
-        fxs[fx],
-        "transition-[clip-path] duration-500 ease-[cubic-bezier(.7,0,.2,1)] motion-reduce:transition-none",
-        "group-hover/tile:duration-700 group-hover/tile:delay-150",
-        "group-focus-visible/tile:duration-700 group-focus-visible/tile:delay-150",
-      ].join(" ")}
-    />
-  );
+    const build = async () => {
+      const root = document.documentElement;
+      const accent =
+        getComputedStyle(root).getPropertyValue("--accent").trim() || "#ff0a3c";
+      const light = root.getAttribute("data-theme") === "light";
+      const key = `${accent}|${light}`;
+      if (key === lastAccent) return;
+      lastAccent = key;
 
-  return href ? (
-    <motion.a
-      {...shared}
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
-    >
-      {fill}
-      {children(sub)}
-    </motion.a>
-  ) : (
-    <motion.div {...shared}>
-      {fill}
-      {children(sub)}
-    </motion.div>
-  );
+      await loadInter();
+      const next = await buildLanyardAssets(accent, INTER, undefined, light);
+      if (!cancelled) setAssets(next);
+    };
+
+    void build();
+    const observer = new MutationObserver(() => void build());
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme", "style"],
+    });
+
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
+  }, []);
+
+  return assets;
 }
 
 /* ---------- background ---------- */
@@ -187,29 +105,52 @@ function Tile({
 const grain =
   "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
 
-function GradientField({ still }: { still: boolean }) {
+function GradientField({
+  still,
+  mx,
+  my,
+}: {
+  still: boolean;
+  mx: MotionValue<number>;
+  my: MotionValue<number>;
+}) {
+  const ax = useTransform(mx, (v) => v * -90);
+  const ay = useTransform(my, (v) => v * -70);
+  const bx = useTransform(mx, (v) => v * 80);
+  const by = useTransform(my, (v) => v * 60);
+
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
       <motion.div
-        className="absolute -left-[15vmax] -top-[20vmax] h-[65vmax] w-[65vmax] rounded-full blur-3xl"
-        style={{
-          background:
-            "radial-gradient(closest-side, color-mix(in oklab, var(--accent) 55%, transparent), transparent)",
-          opacity: 0.7,
-        }}
-        animate={still ? undefined : { x: [0, 60, 0], y: [0, 40, 0] }}
-        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
-      />
+        style={still ? undefined : { x: ax, y: ay }}
+        className="absolute -left-[15vmax] -top-[20vmax] h-[65vmax] w-[65vmax]"
+      >
+        <motion.div
+          className="h-full w-full rounded-full blur-3xl"
+          style={{
+            background:
+              "radial-gradient(closest-side, color-mix(in oklab, var(--accent) 55%, transparent), transparent)",
+            opacity: 0.7,
+          }}
+          animate={still ? undefined : { x: [0, 60, 0], y: [0, 40, 0] }}
+          transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
       <motion.div
-        className="absolute -bottom-[25vmax] -right-[15vmax] h-[60vmax] w-[60vmax] rounded-full blur-3xl"
-        style={{
-          background:
-            "radial-gradient(closest-side, color-mix(in oklab, var(--accent) 35%, var(--muted)), transparent)",
-          opacity: 0.55,
-        }}
-        animate={still ? undefined : { x: [0, -50, 0], y: [0, -50, 0] }}
-        transition={{ duration: 32, repeat: Infinity, ease: "easeInOut" }}
-      />
+        style={still ? undefined : { x: bx, y: by }}
+        className="absolute -bottom-[25vmax] -right-[15vmax] h-[60vmax] w-[60vmax]"
+      >
+        <motion.div
+          className="h-full w-full rounded-full blur-3xl"
+          style={{
+            background:
+              "radial-gradient(closest-side, color-mix(in oklab, var(--accent) 35%, var(--muted)), transparent)",
+            opacity: 0.55,
+          }}
+          animate={still ? undefined : { x: [0, -50, 0], y: [0, -50, 0] }}
+          transition={{ duration: 32, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
       <div
         className="absolute inset-0 opacity-[0.07] mix-blend-overlay"
         style={{ backgroundImage: grain }}
@@ -218,214 +159,215 @@ function GradientField({ still }: { still: boolean }) {
   );
 }
 
+/* ---------- connect buttons ---------- */
+
+const iconProps = {
+  "aria-hidden": true,
+  viewBox: "0 0 24 24",
+  width: "18",
+  height: "18",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+} as const;
+
+const icons = {
+  linkedin: (
+    <svg {...iconProps}>
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z" />
+    </svg>
+  ),
+  github: (
+    <svg {...iconProps}>
+      <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21" />
+    </svg>
+  ),
+  credly: (
+    <svg {...iconProps}>
+      <circle cx="12" cy="9" r="6" />
+      <path d="m9 9 2 2 4-4M8.5 14 7 22l5-3 5 3-1.5-8" />
+    </svg>
+  ),
+  resume: (
+    <svg {...iconProps}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h6" />
+    </svg>
+  ),
+};
+
+function ConnectButton({
+  href,
+  icon,
+  children,
+  primary = false,
+}: {
+  href: string;
+  icon: ReactNode;
+  children: ReactNode;
+  primary?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={[
+        "group/btn relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full px-5 py-3 text-[15px] font-semibold",
+        "transition-[color,transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 active:translate-y-0",
+        "hover:shadow-[0_10px_24px_-16px_var(--accent)] focus-visible:shadow-[0_10px_24px_-16px_var(--accent)]",
+        "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent)]",
+        "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+        primary
+          ? "border border-transparent bg-[var(--accent)] text-[var(--bg)] hover:text-[var(--bg)]"
+          : "border border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] bg-[color-mix(in_oklab,var(--bg)_55%,transparent)] text-[var(--foreground)] backdrop-blur-xl hover:border-[var(--foreground)] hover:text-[var(--bg)] focus-visible:text-[var(--bg)]",
+      ].join(" ")}
+      style={{ fontFamily: INTER }}
+    >
+      {/* fill that sweeps up on hover */}
+      <span
+        aria-hidden
+        className={[
+          "pointer-events-none absolute inset-0 -z-10 translate-y-full rounded-full",
+          "transition-transform duration-500 ease-[cubic-bezier(.7,0,.2,1)] motion-reduce:transition-none",
+          "group-hover/btn:translate-y-0 group-focus-visible/btn:translate-y-0",
+          primary ? "bg-[var(--foreground)]" : "bg-[var(--foreground)]",
+        ].join(" ")}
+      />
+      <span className="inline-flex transition-transform duration-300 group-hover/btn:-rotate-6 group-hover/btn:scale-110">
+        {icon}
+      </span>
+      <span>{children}</span>
+      <svg
+        aria-hidden
+        viewBox="0 0 24 24"
+        width="14"
+        height="14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="-ml-0.5 opacity-60 transition-[transform,opacity] duration-300 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-1 group-hover/btn:opacity-100"
+      >
+        <path d="M7 17 17 7M8 7h9v9" />
+      </svg>
+    </a>
+  );
+}
+
 /* ---------- page ---------- */
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
+};
+const rise = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } },
+};
 
 export function AboutPageContent() {
   const still = useReducedMotion() ?? false;
+  const assets = useLanyardAssets();
+
+  // cursor position, -0.5..0.5, smoothed
+  const mx = useSpring(useMotionValue(0), { stiffness: 40, damping: 20 });
+  const my = useSpring(useMotionValue(0), { stiffness: 40, damping: 20 });
 
   return (
-    /* md:h-svh = the grid fits exactly one screen on desktop (no overflow).
-       pt-24 / md:pt-[92px] clears your fixed navbar; adjust if it changes. */
-    <main className="relative isolate overflow-hidden bg-[var(--bg)] text-[var(--foreground)] md:h-svh md:min-h-[720px]">
-      <GradientField still={still} />
+    <main
+      onPointerMove={
+        still
+          ? undefined
+          : (e) => {
+              mx.set(e.clientX / window.innerWidth - 0.5);
+              my.set(e.clientY / window.innerHeight - 0.5);
+            }
+      }
+      className="relative isolate min-h-svh overflow-hidden bg-[var(--bg)] text-[var(--foreground)] md:h-svh"
+    >
+      <GradientField still={still} mx={mx} my={my} />
 
-      <div className="mx-auto flex h-full max-w-[1600px] flex-col px-4 pb-4 pt-24 md:px-8 md:pt-[92px] lg:px-12">
-        <motion.div
-          variants={container}
-          initial={still ? false : "hidden"}
-          animate="show"
-          className="grid min-h-0 flex-1 grid-cols-2 gap-3 md:grid-cols-12 md:grid-rows-6 md:gap-3"
-        >
-          {/* Statement: ink floods in from wherever the cursor enters */}
-          <Tile
-            fx="circle"
-            flip="ink"
-            track
-            radius="rounded-[40px_140px_40px_40px]"
-            className="col-span-2 min-h-[320px] md:[grid-area:1/1/5/8]"
+      {/* Left: text. Padding matches the navbar so the logo and copy share one
+          left margin. The block is vertically centred below the navbar. */}
+      <motion.section
+        variants={stagger}
+        initial={still ? false : "hidden"}
+        animate="show"
+        className="relative z-10 flex flex-col justify-center px-6 pb-6 pt-28 md:absolute md:inset-y-0 md:left-0 md:w-1/2 md:px-12 md:pb-0 md:pt-[92px]"
+      >
+        <div className="flex w-full flex-col">
+          <motion.h1
+            variants={rise}
+            className="max-w-[34rem] text-[clamp(2.75rem,4.8vw,5rem)] font-bold leading-[1.02] tracking-[-0.04em]"
+            style={{ fontFamily: INTER }}
           >
-            {(sub) => (
-              <>
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute -z-10 rounded-full blur-3xl"
-                  style={{
-                    right: "-15%",
-                    bottom: "-35%",
-                    width: "65%",
-                    height: "85%",
-                    background:
-                      "radial-gradient(closest-side, color-mix(in oklab, var(--accent) 35%, transparent), transparent)",
-                  }}
-                />
-                <p className={`text-sm font-medium ${sub}`}>Divyanshu Singh</p>
-                <h1 className="font-display text-[clamp(3rem,6.6vw,7.5rem)] font-bold leading-[0.9] tracking-[-0.05em]">
-                  <span className="block">Code with</span>
-                  <span className="block">intent.</span>
-                </h1>
-              </>
-            )}
-          </Tile>
+            About Me
+          </motion.h1>
 
-          {/* Intro: diagonal sweep to accent */}
-          <Tile
-            fx="diag"
-            flip="accent"
-            className="col-span-2 gap-6 md:[grid-area:1/8/3/13]"
+          <motion.div
+            variants={rise}
+            lang="en"
+            className="mt-7 mb-10 flex max-w-[34rem] flex-col gap-4 text-[17px] font-normal leading-[1.7] tracking-[-0.005em] text-[color-mix(in_oklab,var(--foreground)_72%,transparent)] text-pretty hyphens-auto text-justify xl:text-[18px]"
+            style={{ fontFamily: INTER, textJustify: "inter-word" }}
           >
-            {(sub) => (
-              <>
-                <p className={`text-sm ${sub}`}>
-                  Creative programmer and AI developer
-                </p>
-                <p className="font-display text-lg font-semibold leading-snug tracking-tight xl:text-xl 2xl:text-2xl">
-                  I build software where engineering, AI and product design
-                  meet, turning real problems into simple, useful things.
-                </p>
-              </>
-            )}
-          </Tile>
+            <p>
+              I&rsquo;m a GenAI, AI/ML and full-stack developer. I&rsquo;ve built
+              hands-on projects across RAG, machine learning and applied AI,
+              taking ideas from model to a working interface.
+            </p>
+            <p>
+              I love using AI to solve real-world problems, and I build with that
+              goal in mind.
+            </p>
+          </motion.div>
 
-          {/* Focus: arch fills upward */}
-          <Tile
-            fx="up"
-            flip="ink"
-            layout="end"
-            radius="rounded-t-full rounded-b-[28px]"
-            className="col-span-1 min-h-[240px] md:[grid-area:3/8/6/11]"
-          >
-            {(sub) => (
-              <>
-                <p className={`text-sm ${sub}`}>Focus</p>
-                <p className="font-display text-2xl font-bold leading-[1.05] tracking-tight xl:text-4xl">
-                  AI and product engineering
-                </p>
-              </>
-            )}
-          </Tile>
+          <motion.div variants={rise} className="flex flex-col">
+            <p
+              className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]"
+              style={{ fontFamily: INTER }}
+            >
+              Connect with me
+            </p>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <ConnectButton href={LINKEDIN_URL} icon={icons.linkedin}>
+                LinkedIn
+              </ConnectButton>
+              <ConnectButton href={GITHUB_URL} icon={icons.github}>
+                GitHub
+              </ConnectButton>
+              <ConnectButton href={CREDLY_URL} icon={icons.credly}>
+                Credly
+              </ConnectButton>
+              <ConnectButton href={RESUME_URL} icon={icons.resume} primary>
+                Resume
+              </ConnectButton>
+            </div>
+          </motion.div>
+        </div>
+      </motion.section>
 
-          {/* Status: accent circle opens to paper from the centre */}
-          <Tile
-            tone="accent"
-            fx="circle"
-            flip="paper"
-            layout="center"
-            radius="rounded-full"
-            className="col-span-1 aspect-square md:aspect-auto md:[grid-area:3/11/5/13]"
-          >
-            {() => (
-              <>
-                <span
-                  aria-hidden
-                  className="h-2.5 w-2.5 rounded-full bg-current"
-                />
-                <p className="font-display text-lg font-bold leading-tight tracking-tight xl:text-xl">
-                  Available
-                  <br />
-                  for work
-                </p>
-              </>
-            )}
-          </Tile>
-
-          {/* Based in: drops down to accent */}
-          <Tile
-            fx="down"
-            flip="accent"
-            className="col-span-1 min-h-[150px] md:[grid-area:5/11/7/13]"
-          >
-            {(sub) => (
-              <>
-                <p className={`text-sm ${sub}`}>Based in</p>
-                <p className="font-display text-4xl font-bold tracking-tight xl:text-5xl">
-                  India
-                </p>
-              </>
-            )}
-          </Tile>
-
-          {/* Resume: ink pill, accent slides in from the right */}
-          <Tile
-            tone="ink"
-            fx="left"
-            flip="accent"
-            layout="row"
-            radius="rounded-full"
-            href="/resume.pdf"
-            external
-            className="col-span-1 self-center md:self-auto md:[grid-area:6/8/7/11]"
-          >
-            {(sub) => (
-              <>
-                <p className="font-display text-xl font-bold tracking-tight xl:text-2xl">
-                  Resume
-                </p>
-                <p className={`text-sm ${sub}`}>PDF</p>
-              </>
-            )}
-          </Tile>
-
-          {/* Stack: ink wipes in from the left */}
-          <Tile
-            fx="right"
-            flip="ink"
-            radius="rounded-[28px_72px_28px_28px]"
-            className="col-span-2 md:[grid-area:5/1/7/5]"
-          >
-            {(sub) => (
-              <>
-                <p className={`text-sm ${sub}`}>Stack</p>
-                <p className="flex flex-wrap gap-x-4 font-display text-2xl font-bold leading-tight tracking-tight md:flex-col md:gap-x-0 xl:text-3xl">
-                  <span>Next.js</span>
-                  <span>Python</span>
-                  <span>FastAPI</span>
-                </p>
-              </>
-            )}
-          </Tile>
-
-          {/* Contact pills */}
-          <Tile
-            fx="right"
-            flip="accent"
-            layout="row"
-            radius="rounded-full"
-            href="mailto:divyanshu.vitc@gmail.com"
-            className="col-span-2 md:[grid-area:5/5/6/8]"
-          >
-            {(sub) => (
-              <>
-                <p className="font-display text-xl font-bold tracking-tight xl:text-2xl">
-                  Email
-                </p>
-                <p className={`min-w-0 truncate text-xs 2xl:text-sm ${sub}`}>
-                  divyanshu.vitc@gmail.com
-                </p>
-              </>
-            )}
-          </Tile>
-
-          <Tile
-            fx="left"
-            flip="ink"
-            layout="row"
-            radius="rounded-full"
-            href="https://www.linkedin.com/in/realdivyanshusingh"
-            external
-            className="col-span-2 md:[grid-area:6/5/7/8]"
-          >
-            {(sub) => (
-              <>
-                <p className="font-display text-xl font-bold tracking-tight xl:text-2xl">
-                  LinkedIn
-                </p>
-                <p className={`min-w-0 truncate text-xs 2xl:text-sm ${sub}`}>
-                  realdivyanshusingh
-                </p>
-              </>
-            )}
-          </Tile>
-        </motion.div>
+      {/* Right: the lanyard hangs from the top edge, centred in the right half
+          (between the page centre and the right edge). */}
+      <div className="relative h-[560px] md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
+        {assets && (
+          <Lanyard
+            frontImage={assets.front}
+            backImage={assets.back}
+            strapImage={assets.strap}
+            cardColor="#0c0c0f"
+            finish="holographic"
+            cornerRadius={0.35}
+            size={0.66}
+            anchor="center"
+            strapLength={0.5}
+            strapWidth={0.9}
+            metal="silver"
+            breeze={0.4}
+          />
+        )}
       </div>
     </main>
   );
