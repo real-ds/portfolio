@@ -188,6 +188,33 @@ body::-webkit-scrollbar {
   font-family: var(--font-inter), "Inter", var(--font-sans), system-ui, sans-serif;
 }
 
+/* ------------------------------------------------------------------ */
+/* Case study reading surface                                          */
+/*                                                                     */
+/* The body is set in Cascadia Code at 20px — the right voice for    */
+/* labels, far too dense for long-form reading. Project case studies  */
+/* opt into a sans face with a sane measure, while every piece of     */
+/* metadata stays on the mono face.                                     */
+/* ------------------------------------------------------------------ */
+
+.cs-prose {
+  font-family: var(--font-sans), "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+  letter-spacing: -0.005em;
+  text-wrap: pretty;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  hyphenate-limit-chars: 7 4 3;
+}
+
+@media (min-width: 768px) {
+  .cs-prose {
+    font-size: 1.0625rem;
+  }
+}
+
 /* Fine, irregular high-ISO grain (two offset layers, no obvious loop) */
 .hero-grain::before,
 .hero-grain::after {

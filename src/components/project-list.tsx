@@ -1,167 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { aiProjects, sdeProjects, Project } from "@/lib/content";
 import { motionTokens, easing } from "@/lib/motion";
-
-/* =========================================================
-   TECHNOLOGY LOGOS
-   Brand marks come from Simple Icons via Iconify and are
-   rendered as a CSS mask, so they inherit `currentColor`
-   (works in both dark and light themes). If an icon does not
-   exist (e.g. "RAG", "CLI", "Local-first"), we fall back to a
-   clean monogram tile instead of a broken image.
-========================================================= */
-
-const techSlugs: Record<string, string> = {
-  "Next.js": "nextdotjs",
-  NextJS: "nextdotjs",
-  React: "react",
-  "React.js": "react",
-  TypeScript: "typescript",
-  JavaScript: "javascript",
-  Python: "python",
-  FastAPI: "fastapi",
-  NodeJS: "nodedotjs",
-  "Node.js": "nodedotjs",
-  Express: "express",
-  Tailwind: "tailwindcss",
-  "Tailwind CSS": "tailwindcss",
-  PostgreSQL: "postgresql",
-  MongoDB: "mongodb",
-  Firebase: "firebase",
-  Supabase: "supabase",
-  Redis: "redis",
-  Docker: "docker",
-  Git: "git",
-  GitHub: "github",
-  "Socket.io": "socketdotio",
-  "Socket.IO": "socketdotio",
-  WebRTC: "webrtc",
-  LangGraph: "langgraph",
-  LangChain: "langchain",
-  Pinecone: "pinecone",
-  OpenAI: "openai",
-  TensorFlow: "tensorflow",
-  PyTorch: "pytorch",
-  Keras: "keras",
-  OpenCV: "opencv",
-  XGBoost: "xgboost",
-  "Scikit-learn": "scikitlearn",
-  "AI / LLM Systems": "openai",
-  "AI / LLM": "openai",
-  "Web Scraping": "scrapy",
-  "Web Scraping / Crawling": "scrapy",
-  "Evaluation & Monitoring": "grafana",
-  Playwright: "playwright",
-  Vercel: "vercel",
-  Render: "render",
-};
-
-function getTechSlug(technology: string) {
-  if (techSlugs[technology]) return techSlugs[technology];
-
-  return technology
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "")
-    .replace(/[./]/g, "");
-}
-
-/** Remembers which icon URLs exist so we don't re-probe / flicker. */
-const iconStatusCache = new Map<string, "ok" | "error">();
-
-function getMonogram(technology: string) {
-  const words = technology
-    .replace(/[^a-zA-Z0-9\s]/g, " ")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  if (words.length === 0) return "?";
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
-  return (words[0][0] + words[1][0]).toUpperCase();
-}
-
-function TechLogo({ technology }: { technology: string }) {
-  const slug = getTechSlug(technology);
-  const url = `https://api.iconify.design/simple-icons:${slug}.svg`;
-
-  const [status, setStatus] = useState<"loading" | "ok" | "error">(
-    iconStatusCache.get(url) ?? "loading"
-  );
-
-  useEffect(() => {
-    const cached = iconStatusCache.get(url);
-    if (cached) {
-      setStatus(cached);
-      return;
-    }
-
-    let cancelled = false;
-    const probe = new window.Image();
-
-    probe.onload = () => {
-      iconStatusCache.set(url, "ok");
-      if (!cancelled) setStatus("ok");
-    };
-    probe.onerror = () => {
-      iconStatusCache.set(url, "error");
-      if (!cancelled) setStatus("error");
-    };
-    probe.src = url;
-
-    return () => {
-      cancelled = true;
-    };
-  }, [url]);
-
-  return (
-    <span
-      className="
-        flex h-16 w-16 shrink-0 items-center justify-center
-        rounded-2xl border border-[var(--dim)]/30
-        bg-[var(--panel)]/[0.06]
-        text-[var(--foreground)]
-        transition-all duration-300
-        group-hover/tech:border-[var(--accent)]/60
-        group-hover/tech:text-[var(--accent)]
-        group-hover/tech:scale-105
-      "
-    >
-      {status === "ok" ? (
-        <span
-          aria-hidden="true"
-          className="block h-8 w-8 bg-current opacity-80 transition-opacity duration-300 group-hover/tech:opacity-100"
-          style={{
-            WebkitMaskImage: `url(${url})`,
-            maskImage: `url(${url})`,
-            WebkitMaskRepeat: "no-repeat",
-            maskRepeat: "no-repeat",
-            WebkitMaskPosition: "center",
-            maskPosition: "center",
-            WebkitMaskSize: "contain",
-            maskSize: "contain",
-          }}
-        />
-      ) : (
-        <span
-          aria-hidden="true"
-          className="font-mono text-base font-semibold tracking-wider opacity-80"
-        >
-          {status === "loading" ? "" : getMonogram(technology)}
-        </span>
-      )}
-    </span>
-  );
-}
+import { TechMark } from "@/components/tech-mark";
 
 /* =========================================================
    ICONS
-========================================================= */
+   ========================================================= */
 
 function GithubIcon() {
   return (
@@ -278,8 +126,9 @@ function ProjectCard({
         │          7 cols            │     5 cols     │
         └────────────────────────────┴────────────────┘
 
-        Top row stretches to equal height (preview fills the row).
-      */}
+Top-left and the preview both stretch to the row height; the
+         preview contains its 16:9 screenshot so nothing is cropped.
+       */}
       <div className="grid min-w-0 grid-cols-1 gap-3 md:gap-4 lg:grid-cols-12">
         {/* =================================================
             TOP LEFT — PROJECT CONTENT
@@ -351,18 +200,27 @@ function ProjectCard({
         </div>
 
         {/* =================================================
-            TOP RIGHT — PREVIEW (fills the row height on lg+)
+            TOP RIGHT — PREVIEW
+
+            The screenshot is 16:9. The frame stretches to the
+            row height so this cell always lines up with the
+            content card beside it, and the image is contained
+            (never cropped) inside it.
         ================================================= */}
         <div className="relative min-w-0 lg:col-span-7">
-          <div className="relative aspect-video w-full min-w-0 max-w-full overflow-hidden rounded-[25px] border border-[var(--dim)]/30 bg-[var(--bg)]/[0.62] lg:aspect-auto lg:h-full lg:min-h-[420px]">
+          <div className="relative aspect-video w-full min-w-0 max-w-full overflow-hidden rounded-[25px] border border-[var(--dim)]/30 bg-[var(--bg)]/[0.62] lg:aspect-auto lg:h-full lg:min-h-[360px]">
             {project.previewImage ? (
-              <Image
-                src={project.previewImage}
-                alt={`${project.title} project preview`}
-                fill
-                sizes="(max-width: 1024px) 100vw, 58vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]"
-              />
+              <div className="absolute inset-0 flex items-center justify-center p-2.5 sm:p-3">
+                <div className="relative h-full w-full">
+                  <Image
+                    src={project.previewImage}
+                    alt={`${project.title} project preview`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 58vw"
+                    className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-[1.015]"
+                  />
+                </div>
+              </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(135deg,transparent_0%,transparent_55%,var(--accent)_260%)]">
                 <div className="flex flex-col items-center gap-4 text-center">
@@ -491,17 +349,14 @@ function ProjectCard({
             <span className="h-px w-12 bg-[var(--dim)]/45" />
           </div>
 
-          <div className="relative z-10 grid min-w-0 grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-7">
+          <div className="relative z-10 grid min-w-0 grid-cols-[repeat(auto-fit,minmax(72px,1fr))] gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-7">
             {project.stack.map((technology) => (
               <div
                 key={technology}
                 title={technology}
                 className="group/tech flex min-w-0 flex-col items-center gap-3 text-center transition-transform duration-300 hover:-translate-y-1"
               >
-                <TechLogo technology={technology} />
-                <span className="max-w-full font-mono text-[10px] font-medium uppercase leading-[1.35] tracking-[0.08em] text-[var(--muted)] transition-colors duration-300 [overflow-wrap:anywhere] group-hover/tech:text-[var(--foreground)] sm:text-[11px]">
-                  {technology}
-                </span>
+                <TechMark technology={technology} />
               </div>
             ))}
           </div>

@@ -339,30 +339,44 @@ MIZAN demonstrates the ability to build an AI product end-to-end, with emphasis 
 
 ## 13.2 StudyMate
 
-**Type:** Grounded RAG academic assistant
+**Type:** RAG study assistant for lecture material
+
+**Live:** https://studymate-ai-hub.vercel.app/
+**Repository:** https://github.com/real-ds/studymate-ai-hub
 
 ### Problem
 
-Students often have study materials distributed across files and sources. During academic stress, creating prompts and organizing information can itself add cognitive load.
+Students often have study materials scattered across lecture slides, PDFs, notes and links. During exam season, deciding what to ask and reorganising information can itself add more load than the studying does.
 
 ### Solution
 
-StudyMate provides a centralized platform where students can upload study materials and generate cleaner, directly usable academic resources.
+StudyMate is a single place where a student signs in, uploads their material, and gets directly usable study resources back — structured notes, flashcards, quizzes, mind maps and revision sheets — with every answer tied to the passage it came from.
 
 ### Features
 - Notes generation
-- Grounded Q&A
+- Flashcards
 - Quizzes
-- Answers grounded in uploaded student sources
+- Mind maps
+- Revision sheets
+- Answers grounded in uploaded student sources, with citations
 
 ### Philosophy
 
 > Reduce cognitive load so students can focus on learning instead of managing information.
 
 ### Technical highlights
-- RAG
-- Source-grounded generation
-- End-to-end application development
+- Python, Pydantic
+- LangChain with Google Gemini
+- Google OAuth
+- RAG with source-grounded generation
+- Semantic chunking with overlap, embeddings and similarity retrieval
+- Citation enforcement on every generated answer
+- Deployed on Vercel
+
+### Learnings
+1. The hardest part of RAG is chunking, not the model — real lecture notes show how much structure fixed token windows destroy.
+2. Forcing citations was the single best quality lever; it made hallucination visible during testing instead of shipping silently.
+3. Shipping it taught the difference between a working demo and a usable product.
 
 ---
 
@@ -448,9 +462,10 @@ A centralized social forum where clubs and societies can:
 - Operate without relying on separate platforms
 
 ### Stack
+- React
+- Next.js
 - Firebase
-- Google OAuth
-- Neon Postgres
+- Vercel
 
 ### Presentation
 

@@ -6,12 +6,16 @@ export interface Project {
   problem: string;
   solution: string;
   technicalDetails: string;
+  technicalDetailsPoints?: string[];
   architecture?: string;
+  architecturePoints?: string[];
   aiApproach?: string;
+  aiApproachPoints?: string[];
   importantDecisions?: string[];
   performanceConsiderations?: string[];
   engineeringChallenges?: string[];
   iterationRefinement?: string;
+  learnings?: string[];
   stack: string[];
   category: "ai" | "sde";
   githubUrl?: string;
@@ -62,31 +66,43 @@ export const aiProjects: Project[] = [
     id: "studymate",
     number: "02",
     title: "StudyMate",
-    shortDescription: "Grounded RAG academic assistant that reduces cognitive load for students",
-    problem: "Students often have study materials distributed across files and sources. During academic stress, creating prompts and organizing information can itself add cognitive load.",
-    solution: "StudyMate provides a centralized platform where students can upload study materials and generate cleaner, directly usable academic resources including notes, grounded Q&A, and quizzes.",
-    technicalDetails: "RAG-based system with source-grounded generation. Document ingestion pipeline for various file formats. Vector embeddings for semantic search across student materials. Generation pipeline for notes, Q&A, and quizzes with citations back to source documents.",
-    architecture: "Document processing pipeline → Vector storage → Retrieval → Grounded generation with source citations → Multiple output formats (notes, Q&A, quizzes).",
-    aiApproach: "RAG with student-uploaded documents as knowledge base. Source-grounded generation ensures all outputs trace back to original materials. No external knowledge hallucination.",
+    shortDescription: "RAG study assistant that turns uploaded material into notes, flashcards, quizzes, mind maps and revision sheets",
+    problem: "Students often have study materials scattered across lecture slides, PDFs, notes and links. During exam season, deciding what to ask and reorganising information can itself add more load than the studying does.",
+    solution: "StudyMate is a single place where a student signs in, uploads their material, and gets directly usable study resources back — structured notes, flashcards, quizzes, mind maps and revision sheets — with every answer tied to the passage it came from.",
+    technicalDetails: "RAG-based system with source-grounded generation. Document ingestion pipeline that parses PDFs, DOCX, PPTX, TXT and Markdown into clean text. Semantic chunking with overlap so a concept is never split across two chunks. Vector embeddings and similarity search across the student's own material. Generation pipeline producing notes, flashcards, quizzes, mind maps and revision sheets, each carrying citations back to the source document.",
+    architecture: "Document ingestion → Parsing and semantic chunking → Embedding and vector storage → Similarity retrieval over the student's uploads → Grounded generation with inline citations → Five output formats rendered from the same retrieved context.",
+    aiApproach: "RAG with student-uploaded documents as the only knowledge base. Source-grounded generation means every claim traces back to a specific passage, and the prompt instructs the model to refuse rather than invent when retrieval comes back empty. Output format is selected by prompt template over shared retrieval, so adding a format never means re-indexing.",
     importantDecisions: [
-      "Strict grounding to uploaded materials only",
-      "Multiple output formats from same retrieval",
-      "Simple upload flow to minimize friction"
+      "Strict grounding to uploaded materials only — no outside knowledge in the answer path",
+      "Every generated answer carries a citation back to its source passage",
+      "Five output formats built from the same retrieval instead of five pipelines",
+      "Chunk overlap chosen over larger chunks so cross-page concepts stay intact",
+      "Minimal upload flow, because friction at upload is where students give up"
     ],
     performanceConsiderations: [
-      "Efficient document chunking for retrieval",
-      "Parallel generation of different output types"
+      "Semantic chunking tuned for lecture-note structure rather than fixed token windows",
+      "Embeddings cached per document so re-uploads and re-generation stay cheap",
+      "Retrieval scoped to the signed-in student's own material",
+      "Parallel generation of flashcards, quizzes and mind maps from one retrieved context"
     ],
     engineeringChallenges: [
-      "Handling diverse document formats (PDF, DOCX, TXT, etc.)",
-      "Maintaining context across large document sets",
-      "Generating pedagogically useful quizzes from source material"
+      "Parsing inconsistent layouts across PDF, DOCX and PPTX into clean text",
+      "Keeping enough context across large document sets without bloating the prompt",
+      "Retrieving the right passage when a question spans several slides",
+      "Generating pedagogically useful quizzes from source material rather than trivia",
+      "Handling the empty-retrieval case without letting the model fill the gap"
     ],
-    iterationRefinement: "Refined chunking strategy and prompt engineering based on student feedback on output quality.",
-    stack: ["RAG", "Source-Grounded Generation", "End-to-End Application Development"],
+    iterationRefinement: "Iterated chunk size, overlap and prompt templates against real lecture notes and textbooks. Quizzes and revision sheets came last and only after testing showed they were the formats students actually reached for under exam pressure.",
+    learnings: [
+      "The hardest part of RAG was never the model — it was the chunking. Reading real lecture notes showed how much structure fixed token windows quietly destroy.",
+      "Forcing citations turned out to be the single best quality lever: it made hallucination visible during testing instead of shipping silently.",
+      "Shipping it taught the difference between a working demo and a usable product — retrieval quality, empty states and upload friction decide whether students come back."
+    ],
+    stack: ["Python", "Pydantic", "LangChain", "Google Gemini", "Google OAuth", "Vercel", "RAG"],
     category: "ai",
     githubUrl: "https://github.com/real-ds/studymate-ai-hub",
-    liveDemoUrl: "#",
+    liveDemoUrl: "https://studymate-ai-hub.vercel.app/",
+    previewImage: "/projects/studymate-ai-hub.png",
     type: "AI Product",
     year: "2024",
     status: "Live"
@@ -123,6 +139,67 @@ export const aiProjects: Project[] = [
     type: "AI Experiment",
     year: "2024",
     status: "In Development"
+  },
+  {
+    id: "maro",
+    number: "04",
+    title: "MARO",
+    shortDescription: "Twelve AI agents read live system telemetry and turn it into one ranked, explained list of what to fix next",
+    problem: "Most system tools tell you what is already wrong, not what is about to go wrong. A dashboard shows CPU at 90%, but not the process behind it, or whether freeing that memory would break something you need next.",
+    solution: "MARO watches a computer in real time and decides what to do next. Twelve small AI agents each look at one part of the system, and a fusion engine turns their advice into one ranked list of actions.",
+    technicalDetails: "Seven sensors read the machine live. Twelve agents each make one prediction, and a fusion engine turns those predictions into ranked actions.",
+    technicalDetailsPoints: [
+      "Seven sensors read the machine live: CPU, memory, GPU, battery, heat, network and input.",
+      "Machine learning is used where it helps — XGBoost, LightGBM, Isolation Forest — and simple rules everywhere else.",
+      "If a model fails, that agent falls back to a rolling average. The system gets less sharp, but it never goes down.",
+      "Every action comes back with its reason, evidence, impact, confidence and risk."
+    ],
+    architecture: "Sensors collect, agents reason, a fusion engine decides.",
+    architecturePoints: [
+      "Seven sensors collect live telemetry into an append-only CSV data lake.",
+      "Twelve specialized agents each make one prediction from that data.",
+      "A collaboration bus detects conflicts, and the fusion engine scores and ranks every action.",
+      "A safety layer decides whether to watch, suggest or act, then a FastAPI gateway and Next.js dashboard show the result."
+    ],
+    aiApproach: "Use machine learning where it earns its place. Keep plain rules where it does not.",
+    aiApproachPoints: [
+      "XGBoost and LightGBM handle context, battery and load. Isolation Forest catches behaviour that does not fit.",
+      "Thermal, GPU and security stay rule-based. A model there would add confidence without adding accuracy.",
+      "Fusion weights live in a config file, not in code, so they can be changed and then measured.",
+      "An evaluation harness compares fusion against four baselines and four ablations, so every claim is measured."
+    ],
+    importantDecisions: [
+      "Twelve small agents beat one big model. Each part of the system gets a model that fits its own data",
+      "Conflicts are detected, not voted on. Agents disagree for good reasons, and voting would hide that",
+      "Every agent has a simple fallback, so one broken model cannot stop the system",
+      "Every decision must explain itself: what, why, evidence, impact, confidence, risk"
+    ],
+    performanceConsiderations: [
+      "0.53 ms per decision on the fusion path",
+      "Append-only CSV data lake instead of a database — write throughput over query flexibility",
+      "Per-agent model caching, so a decision never waits on a model load",
+      "Sampling tuned per sensor, not on one global interval"
+    ],
+    engineeringChallenges: [
+      "Getting seven different Windows sensors into one clean, timestamped stream",
+      "Reconciling agents that disagree — reclaim memory while workflow predicts it is needed",
+      "Keeping anomaly detection from firing on ordinary spikes",
+      "Shipping a system whose own overhead can be larger than the savings it produces"
+    ],
+    iterationRefinement: "Built in five phases, each closed by its own tests. An evaluation harness replays real telemetry, so a change to one agent is measured against the whole system.",
+    learnings: [
+      "Learnt to merge and balance multiple agents' inference into one refined, more accurate output instead of trusting any single agent.",
+      "Learnt to add user context into the model, so a recommendation actually fits the person it was made for.",
+      "Worked on this project end to end, from ideation to deployment. Learnt about Agentic Systems, and got hands-on experience working with AI-powered agentic workspaces."
+    ],
+    stack: ["Python", "FastAPI", "Next.js", "TypeScript", "Tailwind CSS", "Scikit-learn", "XGBoost", "Multi-Agent Systems"],
+    category: "ai",
+    githubUrl: "https://github.com/real-ds/marof",
+    liveDemoUrl: "https://real-ds.github.io/marof/",
+    previewImage: "/projects/maro.png",
+    type: "Multi-Agent Framework",
+    year: "2026",
+    status: "Live"
   }
 ];
 
@@ -166,11 +243,11 @@ export const sdeProjects: Project[] = [
     shortDescription: "Social forum platform for college clubs, societies, and peers",
     problem: "There was no unified platform for students to connect with college clubs, societies, and peers.",
     solution: "A centralized social forum where clubs and societies can create posts, receive feedback, participate with students, and operate without relying on separate platforms.",
-    technicalDetails: "Full-stack social platform with real-time features. Firebase for authentication and real-time database. Google OAuth for seamless student login. Neon Postgres for relational data (clubs, posts, comments, users).",
-    architecture: "Firebase Auth + Firestore for real-time social features. Neon Postgres for structured data and complex queries. Serverless functions for business logic.",
+    technicalDetails: "Full-stack social platform with real-time features. React and Next.js power the client and the server runtime, deployed on Vercel. Firebase handles authentication and the real-time database. Google OAuth for seamless student login.",
+    architecture: "Next.js App Router for the interface and server logic. Firebase Auth + Firestore for real-time social features and structured data. Vercel for hosting and delivery.",
     importantDecisions: [
       "Firebase for real-time social features",
-      "Neon Postgres for relational integrity",
+      "Firestore for relational integrity and flexible queries",
       "Google OAuth for frictionless student onboarding"
     ],
     performanceConsiderations: [
@@ -183,11 +260,17 @@ export const sdeProjects: Project[] = [
       "Scalable feed generation with complex permissions",
       "Moderation tools for club administrators"
     ],
-    iterationRefinement: "Migrated from pure Firebase to hybrid Firebase + Neon for better query flexibility. Added club analytics dashboard.",
-    stack: ["Firebase", "Google OAuth", "Neon Postgres"],
+    iterationRefinement: "Normalized the data model with composite indexes and denormalized counters for better query flexibility. Added club analytics dashboard.",
+    learnings: [
+      "Eliciting requirements properly — understanding the problem, then telling essential requirements apart from nice-to-haves before writing any code.",
+      "Building authentication securely with Google OAuth — delegated sign-in, session handling and protected routes.",
+      "Shipping the full stack — Firebase Auth, Firestore and Vercel — and putting it live on a public URL for real users to actually use."
+    ],
+    stack: ["React", "Next.js", "Firebase", "Vercel"],
     category: "sde",
     githubUrl: "https://github.com/real-ds/vit-connect",
-    liveDemoUrl: "#",
+    liveDemoUrl: "https://real-ds.github.io/vit-connect/",
+    previewImage: "/projects/vit-connect.png",
     type: "Full Stack Platform",
     year: "2024",
     status: "Live"
