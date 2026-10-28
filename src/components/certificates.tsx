@@ -22,27 +22,27 @@ const certificates: Certificate[] = [
   {
     title: "Oracle Cloud Infrastructure 2025 Certified Generative AI Professional",
     image: "/certificates/transparent/OCI25GAIOCP.png",
-    href: "#",
+    href: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=9EA94BAB182B6D7DD2F894F8064CD5B1B6D5CD3FA0DB7D3742B91B5B5107FB2C",
   },
   {
     title: "Oracle Cloud Infrastructure 2025 Certified AI Foundations Associate",
     image: "/certificates/transparent/OCI25AICFA.png",
-    href: "#",
+    href: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=B4A92718C7212C36A181D1FAEB714F5C7A1149A96CA93D6B0609F11781C75D22",
   },
   {
     title: "Oracle Cloud Infrastructure 2025 Certified Foundations Associate",
     image: "/certificates/transparent/OCI25FNDCFA.png",
-    href: "#",
+    href: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=B36749A6BB19CEC67C22C076A98D104890FB4B09B3001542711A69D45647B8AB",
   },
   {
     title: "Oracle Cloud Infrastructure 2025 Certified Architect Associate",
     image: "/certificates/transparent/OCI25CAA.png",
-    href: "#",
+    href: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=98A3748CD88D8B3B7AAFFBFFCBF413AB3BD44F2BE68AC45E784BB220461EA18B",
   },
   {
     title: "Agentic AI Foundations Associate",
     image: "/certificates/transparent/Agentic AI Foundations Associate.png",
-    href: "#",
+    href: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=152FB4810275F6535D0C14EBCF421C24923CBCD0502EFD72F1788BC96AA3419B",
   },
 ];
 

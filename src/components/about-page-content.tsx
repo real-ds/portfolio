@@ -21,8 +21,8 @@ const Lanyard = dynamic(() => import("@/components/ui/lanyard"), {
 /* ---------- content: edit these ---------- */
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/realdivyanshusingh";
-const GITHUB_URL = "https://github.com/YOUR_USERNAME"; // TODO: set
-const CREDLY_URL = "https://www.credly.com/users/YOUR_USERNAME"; // TODO: set
+const GITHUB_URL = "https://github.com/real-ds"; 
+const CREDLY_URL = "https://www.credly.com/users/divyanshusingh/badges/credly";
 const RESUME_URL = "/resume.pdf";
 
 const INTER = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';

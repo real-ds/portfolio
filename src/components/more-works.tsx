@@ -73,7 +73,7 @@ export function MoreWorks() {
         </motion.div>
 
         {/* ================================================= */}
-        {/* MAROF                                             */}
+        {/* ORBIT                                             */}
         {/* ================================================= */}
 
         <motion.article
@@ -133,7 +133,7 @@ export function MoreWorks() {
               <div>
                 <div className="mb-16 flex items-center justify-between">
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--dim)]">
-                    AI / Systems
+                    News / Tech
                   </span>
 
                   <span className="font-mono text-[10px] text-[var(--dim)]">
@@ -142,9 +142,9 @@ export function MoreWorks() {
                 </div>
 
                 <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--dim)]">
-                  Multi-Agent
+                  Tech News
                   <br />
-                  Resource Management
+                  Aggregator
                 </p>
               </div>
 
@@ -154,7 +154,7 @@ export function MoreWorks() {
                 <div className="mb-3 flex items-center gap-3">
                   <span className="h-px w-12 bg-[var(--accent)]" />
                   <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--dim)]">
-                    System / 001
+                    Platform / 001
                   </span>
                 </div>
 
@@ -173,10 +173,10 @@ export function MoreWorks() {
 
               <div className="flex justify-end">
                 <a
-                  href="https://github.com/real-ds/marof.git"
+                  href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Open MAROF on GitHub"
+                  aria-label="Open Orbit on GitHub"
                   className="
                     inline-flex
                     h-12
@@ -198,14 +198,6 @@ export function MoreWorks() {
               </div>
 
               <div className="relative">
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-
-                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--dim)]">
-                    Under development
-                  </span>
-                </div>
-
                 <h3
                   className="
                     max-w-3xl
@@ -223,18 +215,16 @@ export function MoreWorks() {
                     lg:text-[9rem]
                   "
                 >
-                  MARM
+                  Orbit
                 </h3>
 
                 <p className="mt-8 max-w-xl text-sm leading-6 text-[var(--muted)] md:text-[15px] md:leading-7">
-                  A multi-agent resource management platform that observes
-                  system telemetry, understands user activity, and coordinates
-                  intelligent resource optimization.
+                  One place for getting all the latest news and updates in the field of tech.
                 </p>
 
                 <div className="mt-10 flex items-center justify-between border-t border-[var(--dim)]/40 pt-5">
                   <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--dim)]">
-                    Python · FastAPI · XGBoost · Multi-Agent
+                    Next.js · RSS · Aggregation
                   </span>
 
                   <ArrowIcon />
@@ -302,14 +292,6 @@ export function MoreWorks() {
               </div>
 
               <div className="mt-20 md:mt-0">
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-
-                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--dim)]">
-                    Under development
-                  </span>
-                </div>
-
                 <h3
                   className="
                     max-w-2xl

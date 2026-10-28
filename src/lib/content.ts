@@ -28,43 +28,8 @@ export interface Project {
 
 export const aiProjects: Project[] = [
   {
-    id: "mizan",
-    number: "01",
-    title: "MIZAN",
-    shortDescription: "AI portfolio and finance/ticker analyzer with grounded, cited responses",
-    problem: "Users need a way to analyze portfolios and individual stock tickers using useful, grounded information rather than generic AI responses.",
-    solution: "MIZAN is an AI-powered finance analysis platform providing portfolio analysis, individual ticker analysis, comprehensive stock reviews, and grounded, cited answers.",
-    technicalDetails: "Production-oriented RAG with grounded and cited responses. Web scraping/crawling of Yahoo Finance for real-time data. AI evaluation and monitoring for accuracy and grounding evaluation. Hallucination reduction through retrieval-augmented generation with source attribution. End-to-end development from requirements through deployment.",
-    architecture: "RAG pipeline with document ingestion from financial data sources, vector storage for semantic retrieval, LLM generation with citation enforcement, and evaluation pipeline for quality monitoring.",
-    aiApproach: "Retrieval-Augmented Generation with financial data grounding. Custom evaluation metrics for factual accuracy and citation quality. Web crawling for real-time market data ingestion.",
-    importantDecisions: [
-      "Chose RAG over fine-tuning for up-to-date financial data",
-      "Implemented citation system for every claim",
-      "Built custom evaluation pipeline for hallucination detection",
-      "Prioritized grounded responses over conversational fluency"
-    ],
-    performanceConsiderations: [
-      "Optimized vector search latency for real-time queries",
-      "Cached frequent ticker analyses",
-      "Streamed responses for perceived performance"
-    ],
-    engineeringChallenges: [
-      "Handling inconsistent financial data formats from multiple sources",
-      "Ensuring citation accuracy in generated responses",
-      "Building evaluation framework for financial domain"
-    ],
-    iterationRefinement: "Iterated on retrieval strategies, citation formats, and evaluation metrics based on user feedback and accuracy testing.",
-    stack: ["Next.js", "RAG", "AI / LLM Systems", "Web Scraping / Crawling", "Evaluation & Monitoring"],
-    category: "ai",
-    githubUrl: "https://github.com/real-ds/MIZAAN",
-    liveDemoUrl: "#",
-    type: "AI Product",
-    year: "2024",
-    status: "Live"
-  },
-  {
     id: "studymate",
-    number: "02",
+    number: "01",
     title: "StudyMate",
     shortDescription: "RAG study assistant that turns uploaded material into notes, flashcards, quizzes, mind maps and revision sheets",
     problem: "Students often have study materials scattered across lecture slides, PDFs, notes and links. During exam season, deciding what to ask and reorganising information can itself add more load than the studying does.",
@@ -108,41 +73,43 @@ export const aiProjects: Project[] = [
     status: "Live"
   },
   {
-    id: "personalized-email-writer",
-    number: "03",
-    title: "Personalized Email Writer",
-    shortDescription: "Personalized writing system using RAG + model adaptation to learn individual writing style",
-    problem: "Generic AI writing often produces generic output that does not reflect an individual's natural writing style.",
-    solution: "A personal writing system that learns from the user's writing samples, feedback, and writing tasks to adapt generation toward the individual's writing patterns.",
-    technicalDetails: "Base language model with RAG over personal writing examples and context. Model adaptation/fine-tuning pipeline using user writing samples as training signals. Personalized generation that mimics user's style, tone, and patterns.",
-    architecture: "Writing sample collection → RAG index of personal corpus → Base model + LoRA/adapter fine-tuning → Personalized inference with style conditioning.",
-    aiApproach: "Base LLM + RAG over personal writing examples + Model adaptation (fine-tuning/LoRA) for style transfer. Continuous learning from user feedback and corrections.",
+    id: "mizan",
+    number: "02",
+    title: "MIZAN",
+    shortDescription: "AI portfolio and finance/ticker analyzer with grounded, cited responses",
+    problem: "Users need a way to analyze portfolios and individual stock tickers using useful, grounded information rather than generic AI responses.",
+    solution: "MIZAN is an AI-powered finance analysis platform providing portfolio analysis, individual ticker analysis, comprehensive stock reviews, and grounded, cited answers.",
+    technicalDetails: "Production-oriented RAG with grounded and cited responses. Web scraping/crawling of Yahoo Finance for real-time data. AI evaluation and monitoring for accuracy and grounding evaluation. Hallucination reduction through retrieval-augmented generation with source attribution. End-to-end development from requirements through deployment.",
+    architecture: "RAG pipeline with document ingestion from financial data sources, vector storage for semantic retrieval, LLM generation with citation enforcement, and evaluation pipeline for quality monitoring.",
+    aiApproach: "Retrieval-Augmented Generation with financial data grounding. Custom evaluation metrics for factual accuracy and citation quality. Web crawling for real-time market data ingestion.",
     importantDecisions: [
-      "RAG for context + fine-tuning for style internalization",
-      "Simple writing tasks as data collection mechanism",
-      "Privacy-first local processing where possible"
+      "Chose RAG over fine-tuning for up-to-date financial data",
+      "Implemented citation system for every claim",
+      "Built custom evaluation pipeline for hallucination detection",
+      "Prioritized grounded responses over conversational fluency"
     ],
     performanceConsiderations: [
-      "Efficient adapter-based fine-tuning",
-      "Fast inference with style conditioning"
+      "Optimized vector search latency for real-time queries",
+      "Cached frequent ticker analyses",
+      "Streamed responses for perceived performance"
     ],
     engineeringChallenges: [
-      "Balancing style adaptation with content accuracy",
-      "Minimal data requirement for effective personalization",
-      "Avoiding overfitting to small writing samples"
+      "Handling inconsistent financial data formats from multiple sources",
+      "Ensuring citation accuracy in generated responses",
+      "Building evaluation framework for financial domain"
     ],
-    iterationRefinement: "Iterated on adapter rank, training data curation, and prompt conditioning for style transfer quality.",
-    stack: ["Base Language Model", "RAG", "Model Adaptation / Fine-tuning", "Personalized Generation"],
+    iterationRefinement: "Iterated on retrieval strategies, citation formats, and evaluation metrics based on user feedback and accuracy testing.",
+    stack: ["Next.js", "RAG", "AI / LLM Systems", "Web Scraping / Crawling", "Evaluation & Monitoring"],
     category: "ai",
-    githubUrl: "#",
+    githubUrl: "https://github.com/real-ds/MIZAAN",
     liveDemoUrl: "#",
-    type: "AI Experiment",
+    type: "AI Product",
     year: "2024",
-    status: "In Development"
+    status: "Live"
   },
   {
     id: "maro",
-    number: "04",
+    number: "03",
     title: "MARO",
     shortDescription: "Twelve AI agents read live system telemetry and turn it into one ranked, explained list of what to fix next",
     problem: "Most system tools tell you what is already wrong, not what is about to go wrong. A dashboard shows CPU at 90%, but not the process behind it, or whether freeing that memory would break something you need next.",
@@ -205,14 +172,14 @@ export const aiProjects: Project[] = [
 
 export const sdeProjects: Project[] = [
   {
-    id: "pdf-editor",
+    id: "docome",
     number: "01",
-    title: "PDF Editor",
-    shortDescription: "Local-first CLI PDF utility for privacy-conscious document operations",
-    problem: "Sensitive PDF information does not always need to be uploaded to cloud services, and users may not want to install complicated or paid applications for common PDF operations.",
-    solution: "An open-source CLI PDF utility that runs completely on the user's machine and provides useful PDF operations locally.",
-    technicalDetails: "CLI application built with local-first philosophy. No network calls, no cloud dependencies. Implements merge, split, reorder, convert, compress, zip, and other practical PDF operations using native libraries.",
-    architecture: "Modular CLI command structure with plugin-style operation handlers. Each operation is self-contained with shared PDF manipulation core.",
+    title: "Docome",
+    shortDescription: "Local-first CLI document utility for privacy-conscious document operations",
+    problem: "Sensitive Document information does not always need to be uploaded to cloud services, and users may not want to install complicated or paid applications for common document operations.",
+    solution: "An open-source CLI document utility that runs completely on the user's machine and provides useful document related operations locally.",
+    technicalDetails: "CLI application built with local-first philosophy. No network calls, no cloud dependencies. Implements merge, split, reorder, convert, compress, zip, and other practical document operations using native libraries.",
+    architecture: "Modular CLI command structure with plugin-style operation handlers. Each operation is self-contained with shared document manipulation core.",
     importantDecisions: [
       "Local-first: zero network dependencies",
       "CLI interface for automation and scripting",
@@ -220,20 +187,21 @@ export const sdeProjects: Project[] = [
     ],
     performanceConsiderations: [
       "Streaming processing for large files",
-      "Memory-efficient PDF manipulation"
+      "Memory-efficient document manipulation"
     ],
     engineeringChallenges: [
       "Cross-platform binary distribution",
-      "Handling corrupted or malformed PDFs gracefully",
+      "Handling corrupted or malformed documents gracefully",
       "Feature parity with common paid tools"
     ],
     iterationRefinement: "Added operations based on user requests. Optimized compression algorithms for better size reduction.",
-    stack: ["CLI", "Local-First", "PDF Manipulation", "Open Source"],
+    stack: ["Python", "FastAPI",  "PyMuPDF", "Pydantic"],
     category: "sde",
-    githubUrl: "#",
-    liveDemoUrl: "#",
+    githubUrl: "https://github.com/real-ds/docome",
+    liveDemoUrl: "https://real-ds.github.io/docome/",
+    previewImage: "/projects/docome.png",
     type: "CLI Tool",
-    year: "2024",
+    year: "2026",
     status: "Live"
   },
   {
@@ -275,40 +243,57 @@ export const sdeProjects: Project[] = [
     year: "2024",
     status: "Live"
   },
-  {
-    id: "watchwithme",
-    number: "03",
-    title: "WatchWithMe",
-    shortDescription: "Synchronized watch-party application for shared viewing experiences",
-    problem: "People who are physically distant still want to watch content together.",
-    solution: "A simple watch-party experience: paste a content link, create a room, people join, playback synchronizes, members use shared media controls.",
-    technicalDetails: "Real-time synchronization of video playback state across multiple clients. WebSocket-based room management. Shared media controls (play, pause, seek) with conflict resolution. Content link parsing for supported platforms.",
-    architecture: "WebSocket server for real-time state sync. Client-side video player wrapper with programmatic control. Room-based session management.",
-    importantDecisions: [
-      "WebSocket for low-latency sync",
-      "Host-authoritative playback state",
-      "Minimal UI focused on shared experience"
-    ],
-    performanceConsiderations: [
-      "Minimal sync payload size",
-      "Efficient reconnection handling",
-      "Low-latency command propagation"
-    ],
-    engineeringChallenges: [
-      "Cross-platform video player API differences",
-      "Network latency compensation for sync",
-      "Handling DRM-protected content limitations"
-    ],
-    iterationRefinement: "Improved sync algorithm with latency compensation. Added support for more content sources.",
-    stack: ["WebSockets", "Real-time Sync", "Video Player APIs"],
-    category: "sde",
-    githubUrl: "#",
-    liveDemoUrl: "#",
-    type: "Real-time Application",
-    year: "2024",
-    status: "Live"
-  }
-];
+  
+{
+  id: "sewasetu",
+  number: "03",
+  title: "SewaSetu",
+  shortDescription: "Citizen-centric e-governance platform for streamlined public service delivery",
+  problem: "Citizens often face fragmented government services, complex workflows, and limited transparency when accessing public services.",
+  solution: "A centralized e-governance platform connecting citizens and government officers through dedicated services, secure authentication, automated workflows, and integrated communication.",
+  technicalDetails: "Six-service application architecture with Flask-based backend services and PostgreSQL for persistent data storage. OAuth and JWT-based authentication with JWKS for token verification. Separate Model Context Protocol (MCP) servers for citizen and government-officer workflows. Integrated task scheduling, simulated SMS notifications, and audit logging.",
+  architecture: "Microservices-oriented architecture with six dedicated services. Flask APIs handle backend operations, PostgreSQL manages persistent data, and OAuth/JWT provide secure authentication. Dedicated MCP servers support citizen and government-officer workflows, while a scheduler automates tasks and an SMS gateway simulates notifications. Docker Compose manages service orchestration.",
+  importantDecisions: [
+    "Separated application responsibilities into six dedicated services",
+    "Implemented OAuth and JWT-based authentication with JWKS verification",
+    "Designed separate MCP servers for citizen and government-officer workflows",
+    "Used PostgreSQL for persistent data management",
+    "Integrated audit logging for system activity tracking"
+  ],
+  performanceConsiderations: [
+    "Independent services for clearer responsibility boundaries",
+    "Efficient database operations using PostgreSQL",
+    "Automated task execution through a scheduler",
+    "Containerized deployment using Docker Compose",
+    "Structured audit logging for monitoring and traceability"
+  ],
+  engineeringChallenges: [
+    "Coordinating communication across multiple services",
+    "Managing secure authentication and token verification",
+    "Separating citizen and government-officer workflows",
+    "Integrating MCP servers with application services",
+    "Handling scheduled tasks, notifications, and audit logging"
+  ],
+  iterationRefinement: "Developed a modular service architecture integrating secure authentication, role-specific MCP workflows, scheduled task execution, simulated SMS notifications, and audit logging.",
+  stack: [
+    "Python",
+    "Flask",
+    "PostgreSQL",
+    "OAuth 2.0",
+    "JWT",
+    "JWKS",
+    "Model Context Protocol (MCP)",
+    "Docker Compose"
+  ],
+  category: "sde",
+  githubUrl: "https://www.github.com/real-ds/sewasetu",
+  liveDemoUrl: "https://www.sewasetu-backend.onrender.com/",
+  previewImage: "/projects/sewasetu.png",
+  type: "E-Governance Platform",
+  year: "2026",
+  status: "Developed"
+}
+  ];
 
 export const allProjects = [...aiProjects, ...sdeProjects];
 
@@ -341,4 +326,5 @@ export const technologyCategories = [
   "AI / ML Technologies",
   "Agentic AI Technologies",
   "Modern Web Technologies",
+  "Pydantic"
 ];
