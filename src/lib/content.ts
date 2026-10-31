@@ -73,43 +73,8 @@ export const aiProjects: Project[] = [
     status: "Live"
   },
   {
-    id: "mizan",
-    number: "02",
-    title: "MIZAN",
-    shortDescription: "AI portfolio and finance/ticker analyzer with grounded, cited responses",
-    problem: "Users need a way to analyze portfolios and individual stock tickers using useful, grounded information rather than generic AI responses.",
-    solution: "MIZAN is an AI-powered finance analysis platform providing portfolio analysis, individual ticker analysis, comprehensive stock reviews, and grounded, cited answers.",
-    technicalDetails: "Production-oriented RAG with grounded and cited responses. Web scraping/crawling of Yahoo Finance for real-time data. AI evaluation and monitoring for accuracy and grounding evaluation. Hallucination reduction through retrieval-augmented generation with source attribution. End-to-end development from requirements through deployment.",
-    architecture: "RAG pipeline with document ingestion from financial data sources, vector storage for semantic retrieval, LLM generation with citation enforcement, and evaluation pipeline for quality monitoring.",
-    aiApproach: "Retrieval-Augmented Generation with financial data grounding. Custom evaluation metrics for factual accuracy and citation quality. Web crawling for real-time market data ingestion.",
-    importantDecisions: [
-      "Chose RAG over fine-tuning for up-to-date financial data",
-      "Implemented citation system for every claim",
-      "Built custom evaluation pipeline for hallucination detection",
-      "Prioritized grounded responses over conversational fluency"
-    ],
-    performanceConsiderations: [
-      "Optimized vector search latency for real-time queries",
-      "Cached frequent ticker analyses",
-      "Streamed responses for perceived performance"
-    ],
-    engineeringChallenges: [
-      "Handling inconsistent financial data formats from multiple sources",
-      "Ensuring citation accuracy in generated responses",
-      "Building evaluation framework for financial domain"
-    ],
-    iterationRefinement: "Iterated on retrieval strategies, citation formats, and evaluation metrics based on user feedback and accuracy testing.",
-    stack: ["Next.js", "RAG", "AI / LLM Systems", "Web Scraping / Crawling", "Evaluation & Monitoring"],
-    category: "ai",
-    githubUrl: "https://github.com/real-ds/MIZAAN",
-    liveDemoUrl: "#",
-    type: "AI Product",
-    year: "2024",
-    status: "Live"
-  },
-  {
     id: "maro",
-    number: "03",
+    number: "02",
     title: "MARO",
     shortDescription: "Twelve AI agents read live system telemetry and turn it into one ranked, explained list of what to fix next",
     problem: "Most system tools tell you what is already wrong, not what is about to go wrong. A dashboard shows CPU at 90%, but not the process behind it, or whether freeing that memory would break something you need next.",
