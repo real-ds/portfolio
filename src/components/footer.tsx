@@ -80,7 +80,7 @@ export function Footer() {
         </div>
 
         {/* Footer content */}
-        <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 gap-10 md:grid-cols-4 md:gap-8">
+        <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 gap-10 md:grid-cols-[1.2fr_repeat(3,1fr)] md:gap-8">
 
           {/* Contact */}
           <div>
@@ -90,7 +90,7 @@ export function Footer() {
 
             <Link
               href="mailto:divyanshu.vitc@gmail.com"
-              className="group inline-flex items-center gap-2 text-xl font-semibold tracking-[-0.035em] text-white transition-opacity duration-300 hover:opacity-50 md:text-[21px]"
+              className="group inline-flex items-center gap-2 text-xl font-semibold tracking-[-0.035em] text-white transition-opacity duration-300 hover:opacity-50 md:text-[21px] whitespace-nowrap"
             >
               divyanshu.vitc@gmail.com
 
