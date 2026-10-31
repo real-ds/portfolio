@@ -153,16 +153,17 @@ export function Hero() {
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ delay: 0.15, duration: 1.25, ease: easing.editorial }}
       >
-        <div className="absolute inset-0 origin-[50%_100%] translate-x-[8%] scale-[1.24] md:scale-[1.08]">
+        {/* Mobile: no scale / shift so the cutout stays inside the frame.
+            md and up: original laptop transform and alignment. */}
+        <div className="absolute inset-0 origin-[50%_100%] translate-x-0 scale-100 md:translate-x-[8%] md:scale-[1.08]">
           <Image
             src="/hero/hero-cutout.png"
             alt="Portrait of Divyanshu Singh"
             fill
             priority
             sizes="(max-width: 767px) 100vw, 63vw"
-            className="object-contain"
+            className="object-contain object-[50%_100%] md:object-[100%_100%]"
             style={{
-              objectPosition: "100% 100%",
               filter: "grayscale(1) contrast(1.06) brightness(.98)",
             }}
           />
@@ -188,9 +189,11 @@ export function Hero() {
         </div>
       </motion.div>
 
-      {/* Main content */}
-      <div className="absolute inset-0 z-20 mx-auto max-w-[1700px] px-6 md:px-12 lg:px-16 xl:px-20">
-        <div className="flex h-full items-end pb-8 md:items-center md:pb-0">
+      {/* Main content. On mobile it sits at z-[5], behind the portrait (z-[8]),
+          and is pinned to the top. From md up it returns to z-20, centred,
+          exactly as before. */}
+      <div className="absolute inset-0 z-[5] mx-auto max-w-[1700px] px-6 md:z-20 md:px-12 lg:px-16 xl:px-20">
+        <div className="flex h-full items-start pt-[14svh] md:items-center md:pt-0">
           <motion.div
             className="relative max-w-[820px] md:mt-[4vh]"
             initial="hidden"
@@ -198,8 +201,11 @@ export function Hero() {
             variants={fadeUp}
             custom={0.1}
           >
+            {/* Mobile size is relative to viewport width so it can never
+                overflow; whitespace-nowrap keeps each word on its own line.
+                The md: clamp is the original laptop sizing. */}
             <h1
-              className="text-[104px] font-extrabold leading-[.84] tracking-[-0.065em] md:text-[clamp(64px,9.2vw,158px)]"
+              className="whitespace-nowrap text-[14vw] font-extrabold leading-[.84] tracking-[-0.065em] md:text-[clamp(64px,9.2vw,158px)]"
             >
               <span
                 className="block"
@@ -234,7 +240,6 @@ export function Hero() {
           }}
         />
       )}
-
-      </section>
+    </section>
   );
 }

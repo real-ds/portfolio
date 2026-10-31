@@ -4,14 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { navLinks } from "@/lib/content";
-import { useTheme } from "./theme-provider";
 import { motionTokens, easing } from "@/lib/motion";
 
 const MotionLink = motion.create(Link);
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="md:hidden">
@@ -108,8 +106,9 @@ export function MobileNav() {
                 About Me
               </MotionLink>
 
-              {/* Theme toggle in mobile menu */}
-              <motion.button
+              {/* GET IN TOUCH button at bottom */}
+              <MotionLink
+                href="/about"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
@@ -118,11 +117,12 @@ export function MobileNav() {
                   duration: motionTokens.reveal,
                   ease: easing.editorial,
                 }}
-                onClick={toggleTheme}
-                className="mt-8 px-6 py-3 border border-[var(--dim)] text-sm font-mono tracking-wider uppercase text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors duration-300"
+                className="mt-8 inline-flex items-center gap-2 px-8 py-3 border border-[var(--accent)] text-[var(--accent)] font-mono text-sm tracking-wider uppercase hover:bg-[var(--accent)] hover:text-[var(--bg)] transition-all duration-300"
+                onClick={() => setIsOpen(false)}
               >
-                {theme === "dark" ? "Light Mode" : "Dark Mode"}
-              </motion.button>
+                GET IN TOUCH
+                <span>→</span>
+              </MotionLink>
             </nav>
           </motion.div>
         )}
