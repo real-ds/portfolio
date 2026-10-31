@@ -71,24 +71,6 @@ export function MobileNav() {
                 </MotionLink>
               ))}
 
-              {/* GET IN TOUCH button in mobile */}
-              <MotionLink
-                href="/about"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{
-                  delay: 0.4,
-                  duration: motionTokens.reveal,
-                  ease: easing.editorial,
-                }}
-                className="inline-flex items-center gap-2 px-8 py-3 border border-[var(--accent)] text-[var(--accent)] font-mono text-sm tracking-wider uppercase hover:bg-[var(--accent)] hover:text-[var(--bg)] transition-all duration-300"
-                onClick={() => setIsOpen(false)}
-              >
-                GET IN TOUCH
-                <span>→</span>
-              </MotionLink>
-
               {/* About Me link */}
               <MotionLink
                 href="/about"
@@ -96,7 +78,7 @@ export function MobileNav() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{
-                  delay: 0.5,
+                  delay: 0.4,
                   duration: motionTokens.reveal,
                   ease: easing.editorial,
                 }}
@@ -113,7 +95,7 @@ export function MobileNav() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{
-                  delay: 0.6,
+                  delay: 0.5,
                   duration: motionTokens.reveal,
                   ease: easing.editorial,
                 }}
