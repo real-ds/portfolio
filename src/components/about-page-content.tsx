@@ -23,7 +23,7 @@ const Lanyard = dynamic(() => import("@/components/ui/lanyard"), {
 const LINKEDIN_URL = "https://www.linkedin.com/in/realdivyanshusingh";
 const GITHUB_URL = "https://github.com/real-ds"; 
 const CREDLY_URL = "https://www.credly.com/users/divyanshusingh/badges/credly";
-const RESUME_URL = "https://www.overleaf.com/project/6ae495cf82a8635b38a260f2/share#0c0e4206b54356199b9731e713d1620c41ecfc89aa01d2a8";
+const RESUME_URL = "https://drive.google.com/drive/folders/13uGTRHyXc7JhJtswGmESU0KyVz-FGlGJ?usp=sharing";
 
 const INTER = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
 
